@@ -11,9 +11,31 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   Tween<double> _scaleTween = Tween<double>(begin: 0, end: 200);
   NavigationService navigate = locator<NavigationService>();
+
+  AnimationController _animationController;
+  Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 3));
+
+    _animation = Tween(begin: 1.0, end: -1.0).animate(_animationController);
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +63,9 @@ class _SplashScreenState extends State<SplashScreen> {
                   child: Container(
                       color: Styles.appBackground,
                       alignment: Alignment.center,
-                      child: Image.asset('images/logo.png', height: 2)),
+                      child: FadeTransition(
+                         opacity: _animation,
+                        child: Image.asset('images/logo.png', height: 2))),
                 ),
               ),
             ),
